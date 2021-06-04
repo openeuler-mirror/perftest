@@ -1,13 +1,13 @@
 Name:           perftest
 Version:        4.2
-Release:        4
+Release:        5
 License:        GPLv2 or BSD
 Summary:        RDMA Performance Testing Tools
 Url:            https://github.com/linux-rdma/perftest
 Source:         https://github.com/linux-rdma/%{name}/releases/download/V4.2-0.8/perftest-4.2-0.8.g0e24e67.tar.gz
 
 
-BuildRequires:  libibverbs-devel >= 1.2.0 librdmacm-devel >= 1.0.21 libibumad-devel >= 1.3.10.2
+BuildRequires:  gcc libibverbs-devel >= 1.2.0 librdmacm-devel >= 1.0.21 libibumad-devel >= 1.3.10.2
 Obsoletes:      openib-perftest < 1.3
 
 %description
@@ -30,5 +30,8 @@ done
 %_bindir/*
 
 %changelog
+* Web 02 Jun 2021 zhaoyao<zhaoyao32@huawei.com> - 4.2-5
+- fixs faileds: /bin/sh: gcc: command not found.
+
 * Tue Nov 13 2019 Shuaishuai Song <songshuaishuai2@huawei.com> - 4.2-4
 - Package init

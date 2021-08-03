@@ -1,6 +1,6 @@
 Name:           perftest
 Version:        4.2
-Release:        6
+Release:        7
 License:        GPLv2 or BSD
 Summary:        RDMA Performance Testing Tools
 Url:            https://github.com/linux-rdma/perftest
@@ -10,6 +10,8 @@ Source:         https://github.com/linux-rdma/%{name}/releases/download/V4.2-0.8
 BuildRequires:  gcc libibverbs-devel >= 1.2.0 librdmacm-devel >= 1.0.21 libibumad-devel >= 1.3.10.2
 Obsoletes:      openib-perftest < 1.3
 
+Patch0001: bugfix-of-gcc-10.patch
+
 %description
 Perftest is a collection of simple tools for testing bandwidth and latency over RDMA connections.
 
@@ -18,7 +20,7 @@ Perftest is a collection of simple tools for testing bandwidth and latency over 
 
 %build
 %configure
-%make_build CFLAGS+="-fPIC -g -Wall -D_GNU_SOURCE -O3 -fcommon"
+%make_build CFLAGS+="-fPIC -g -Wall -D_GNU_SOURCE -O3"
 
 %install
 for file in ib_{atomic,read,send,write}_{lat,bw} raw_ethernet_{lat,bw}; do
@@ -30,6 +32,9 @@ done
 %_bindir/*
 
 %changelog
+* Tue 3 Aug 2021 Shenmei Tu <tushenmei@huawei.com> - 4.2-7
+- bugfix-of-gcc-10.patch
+
 * Fri 30 July 2021 Shenmei Tu <tushenmei@huawei.com> - 4.2-6
 - bug fix of multiple definition
 

@@ -1,0 +1,55 @@
+From 1780311f7bb12dee2b53dddbc8076d4ca4ea65bc Mon Sep 17 00:00:00 2001
+From: HeJiatai <jiatai2021@iscas.ac.cn>
+Date: Thu, 20 Jan 2022 21:35:39 +0800
+Subject: [PATCH] Perftest:support get_cycles for riscv
+
+This patch support the get_cycles for riscv to get the system time. And then
+perftest can be built successfully in riscv architecture, which was tested in
+openeuler-riscv64 and debian-riscv64-qemu.
+---
+ src/get_clock.h | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/src/get_clock.h b/src/get_clock.h
+index dacbcd0..dde3c34 100755
+--- a/src/get_clock.h
++++ b/src/get_clock.h
+@@ -104,7 +104,38 @@ static inline cycles_t get_cycles()
+ 	asm volatile("mrs %0, cntvct_el0" : "=r" (cval));
+ 	return cval;
+ }
++#elif defined(__riscv)
++#define ASM_STR(x) #x
++#define csr_read(csr)						\
++({								\
++	register unsigned long __v;				\
++	__asm__ __volatile__ ("csrr %0, " ASM_STR(csr)          \
++			      : "=r" (__v) :			\
++			      : "memory");			\
++	__v;							\
++})//read mtime csr
++#define CSR_TIME		0xc01  //read mtime from csrs rather than the mmap
++#if  __riscv_xlen == 64
++typedef unsigned long long cycles_t;
++static inline cycles_t get_cycles()
++{
++	return csr_read(CSR_TIME);
++}
++#elif __riscv_xlen == 32
++#define CSR_TIMEH		0xc81
++typedef unsigned long long cycles_t;
++static inline cycles_t get_cycles()
++{	uint32_t hi, lo;
++
++	do {
++		hi = csr_read(CSR_TIMEH);
++		lo = csr_read(CSR_TIME);
++	} while (hi != csr_read(CSR_TIMEH));
+ 
++	return ((uint64_t)hi << 32) | lo;
++
++}
++#endif/*__riscv*/
+ #else
+ #warning get_cycles not implemented for this architecture: attempt asm/timex.h
+ #include <asm/timex.h>

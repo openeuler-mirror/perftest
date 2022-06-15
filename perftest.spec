@@ -33,14 +33,14 @@ done
 * Tue Jan 18 2022 SimpleUpdate Robot <tc@openeuler.org> - 4.5-1
 - Upgrade to version 4.5
 
-* Tue 3 Aug 2021 Shenmei Tu <tushenmei@huawei.com> - 4.2-7
+* Tue Aug 03 2021 Shenmei Tu <tushenmei@huawei.com> - 4.2-7
 - bugfix-of-gcc-10.patch
 
-* Fri 30 July 2021 Shenmei Tu <tushenmei@huawei.com> - 4.2-6
+* Fri Jul 30 2021 Shenmei Tu <tushenmei@huawei.com> - 4.2-6
 - bug fix of multiple definition
 
-* Web 02 Jun 2021 zhaoyao<zhaoyao32@huawei.com> - 4.2-5
+* Wed Jun 02 2021 zhaoyao<zhaoyao32@huawei.com> - 4.2-5
 - fixs faileds: /bin/sh: gcc: command not found.
 
-* Tue Nov 13 2019 Shuaishuai Song <songshuaishuai2@huawei.com> - 4.2-4
+* Wed Nov 13 2019 Shuaishuai Song <songshuaishuai2@huawei.com> - 4.2-4
 - Package init

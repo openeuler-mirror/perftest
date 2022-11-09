@@ -1,0 +1,72 @@
+From da0dc664ee473f6e35abfadcf121fd4e4081ee9b Mon Sep 17 00:00:00 2001
+From: Chengchang Tang <tangchengchang@huawei.com>
+Date: Fri, 16 Sep 2022 11:28:29 +0800
+Subject: Perftest: Add support for HNS
+
+Add support for HNS device by making it recognized by perftest.
+Make the perftest allow testing new post send method for hns roce.
+And a suitable default inline data size is applied.
+
+Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
+---
+ src/perftest_parameters.c | 9 +++++++++
+ src/perftest_parameters.h | 1 +
+ src/perftest_resources.c  | 3 ++-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/src/perftest_parameters.c b/src/perftest_parameters.c
+index 5fd9f7d..73a8df5 100755
+--- a/src/perftest_parameters.c
++++ b/src/perftest_parameters.c
+@@ -1851,6 +1851,13 @@ enum ctx_device ib_dev_name(struct ibv_context *context)
+ 			case 55300 : dev_fname = NETXTREME; break;
+ 			case 61344 : dev_fname = EFA; break;
+ 			case 61345 : dev_fname = EFA; break;
++			case 41506 : dev_fname = HNS; break;
++			case 41507 : dev_fname = HNS; break;
++			case 41508 : dev_fname = HNS; break;
++			case 41509 : dev_fname = HNS; break;
++			case 41510 : dev_fname = HNS; break;
++			case 41512 : dev_fname = HNS; break;
++			case 41519 : dev_fname = HNS; break;
+ 			default	   : dev_fname = UNKNOWN;
+ 		}
+ 	}
+@@ -2054,6 +2061,8 @@ static void ctx_set_max_inline(struct ibv_context *context,struct perftest_param
+ 				user_param->inline_size = 32;
+ 			else if (current_dev == QLOGIC_E4)
+ 				user_param->inline_size = 128;
++			else if (current_dev == HNS)
++				user_param->inline_size = 32;
+ 
+ 		} else {
+ 			user_param->inline_size = 0;
+diff --git a/src/perftest_parameters.h b/src/perftest_parameters.h
+index bad587c..717a154 100755
+--- a/src/perftest_parameters.h
++++ b/src/perftest_parameters.h
+@@ -380,6 +380,7 @@ enum ctx_device {
+ 	CONNECTX7		= 26,
+ 	QLOGIC_AHP		= 27,
+ 	BLUEFIELD3		= 28,
++	HNS			= 29,
+ };
+ 
+ /* Units for rate limiter */
+diff --git a/src/perftest_resources.c b/src/perftest_resources.c
+index 5065181..dc19cc3 100755
+--- a/src/perftest_resources.c
++++ b/src/perftest_resources.c
+@@ -1979,7 +1979,8 @@ int verify_params_with_device_context(struct ibv_context *context,
+ 		current_dev != BLUEFIELD &&
+ 		current_dev != BLUEFIELD2 &&
+ 		current_dev != BLUEFIELD3 &&
+-		current_dev != EFA)
++		current_dev != EFA &&
++		current_dev != HNS)
+ 	{
+ 		if (!user_param->use_old_post_send)
+ 		{
+-- 
+2.30.0
+

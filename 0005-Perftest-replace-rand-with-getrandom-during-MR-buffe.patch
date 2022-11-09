@@ -1,0 +1,144 @@
+From cfe0f71c2382f95e809f7edefa052e7ac9a41f8e Mon Sep 17 00:00:00 2001
+From: Chengchang Tang <tangchengchang@huawei.com>
+Date: Thu, 28 Apr 2022 15:59:42 +0800
+Subject: Perftest: replace rand() with getrandom() during MR buffer
+ initialization
+
+rand() has very poor performance in some OS.
+
+ib_send_bw will spend a lot of time during MR initialization when
+testing large packects in above scenario.
+
+test has been done:
+"""
+int main(int argc, char *argv[])
+{
+        char *a = malloc(HUGE_MR_SIZE * sizeof(char));
+        unsigned int i;
+        char *tmp = a;
+        int ret;
+
+        srand(time(NULL));
+        if (a == NULL)
+                exit(1);
+
+        if (argc <= 1)
+                goto fall_back;
+
+        for (i = HUGE_MR_SIZE; i > 0;) {
+                ret = getrandom(tmp, i, 0);
+                if (ret < 0)
+                        goto fall_back;
+                tmp += ret;
+                i -= ret;
+        }
+        goto out;
+
+fall_back:
+        for(i = 0; i < HUGE_MR_SIZE; i++)
+                a[i] = (char)rand();
+out:
+        free(a);
+        return 0;
+}
+
+time ./a.out
+real    5m35.033s
+user    5m33.546s
+sys     0m0.918s
+
+time ./a.out 1
+
+real    0m6.454s
+user    0m0.000s
+sys     0m6.449s
+"""
+
+As shown in the test above, getrandom() has a much better performance,
+so replace rand() with it.
+
+Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
+---
+ configure.ac             |  1 +
+ src/perftest_resources.c | 31 ++++++++++++++++++++++++++-----
+ 2 files changed, 27 insertions(+), 5 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 0c310f9..007957b 100755
+--- a/configure.ac
++++ b/configure.ac
+@@ -60,6 +60,7 @@ AC_PROG_LIBTOOL
+ AC_PROG_RANLIB
+ AC_HEADER_STDC
+ AC_CHECK_HEADERS([infiniband/verbs.h],,[AC_MSG_ERROR([ibverbs header files not found])])
++AC_CHECK_HEADERS([sys/random.h],,[AC_MSG_ERROR([getrandom available])])
+ AC_CHECK_LIB([ibverbs], [ibv_get_device_list], [], [AC_MSG_ERROR([libibverbs not found])])
+ AC_CHECK_LIB([rdmacm], [rdma_create_event_channel], [], AC_MSG_ERROR([librdmacm-devel not found]))
+ AC_CHECK_LIB([ibumad], [umad_init], [LIBUMAD=-libumad], AC_MSG_ERROR([libibumad not found]))
+diff --git a/src/perftest_resources.c b/src/perftest_resources.c
+index dc19cc3..334bede 100755
+--- a/src/perftest_resources.c
++++ b/src/perftest_resources.c
+@@ -22,6 +22,9 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
++#ifdef HAVE_SYS_RANDOM_H
++#include <sys/random.h>
++#endif
+ #ifdef HAVE_SRD
+ #include <infiniband/efadv.h>
+ #endif
+@@ -1716,12 +1719,33 @@ int create_cqs(struct pingpong_context *ctx, struct perftest_parameters *user_pa
+ 	return ret;
+ }
+ 
++static void random_data(char *buf, int buff_size)
++{
++	int i;
++#ifdef HAVE_SYS_RANDOM_H
++	char *tmp = buf;
++	int ret;
++
++	for(i = buff_size; i > 0;) {
++		ret = getrandom(tmp, i, 0);
++		if(ret < 0)
++			goto fall_back;
++		tmp += ret;
++		i -= ret;
++	}
++	return;
++fall_back:
++#endif
++	srand(time(NULL));
++	for (i = 0; i < buff_size; i++)
++		buf[i] = (char)rand();
++}
++
+ /******************************************************************************
+  *
+  ******************************************************************************/
+ int create_single_mr(struct pingpong_context *ctx, struct perftest_parameters *user_param, int qp_index)
+ {
+-	int i;
+ 	int flags = IBV_ACCESS_LOCAL_WRITE;
+ 
+ 
+@@ -1860,13 +1884,10 @@ int create_single_mr(struct pingpong_context *ctx, struct perftest_parameters *u
+ #ifdef HAVE_CUDA
+ 	if (!user_param->use_cuda) {
+ #endif
+-		srand(time(NULL));
+ 		if (user_param->verb == WRITE && user_param->tst == LAT) {
+ 			memset(ctx->buf[qp_index], 0, ctx->buff_size);
+ 		} else {
+-			for (i = 0; i < ctx->buff_size; i++) {
+-				((char*)ctx->buf[qp_index])[i] = (char)rand();
+-			}
++			random_data(ctx->buf[qp_index], ctx->buff_size);
+ 		}
+ #ifdef HAVE_CUDA
+ 	}
+-- 
+2.30.0
+

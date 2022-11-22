@@ -1,4 +1,4 @@
-From 1c7d57d794609887f3084408630814c8f02fad1f Mon Sep 17 00:00:00 2001
+From 3ded8d702bf95186cd2ddbae7e3c23bfd1aa9d31 Mon Sep 17 00:00:00 2001
 From: Chengchang Tang <tangchengchang@huawei.com>
 Date: Mon, 7 Nov 2022 16:09:42 +0800
 Subject: Perftest: Add new HNS roce device (ROH) to support new_io
@@ -11,10 +11,10 @@ Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/src/perftest_parameters.c b/src/perftest_parameters.c
-index 73a8df5..a048a5a 100755
+index 9c49265..034a20e 100755
 --- a/src/perftest_parameters.c
 +++ b/src/perftest_parameters.c
-@@ -1858,6 +1858,9 @@ enum ctx_device ib_dev_name(struct ibv_context *context)
+@@ -1873,6 +1873,9 @@ enum ctx_device ib_dev_name(struct ibv_context *context)
  			case 41510 : dev_fname = HNS; break;
  			case 41512 : dev_fname = HNS; break;
  			case 41519 : dev_fname = HNS; break;
@@ -25,5 +25,5 @@ index 73a8df5..a048a5a 100755
  		}
  	}
 -- 
-2.30.0
+2.34.1
 

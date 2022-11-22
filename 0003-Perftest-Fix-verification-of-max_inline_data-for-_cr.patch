@@ -1,6 +1,6 @@
-From 950e7e2da1b50e5aab20b2efb450890df1ef0ed1 Mon Sep 17 00:00:00 2001
+From 1a842d207a981c72c5162f4efd89da8c5a07a772 Mon Sep 17 00:00:00 2001
 From: Chengchang Tang <tangchengchang@huawei.com>
-Date: Mon, 7 Nov 2022 21:09:08 +0800
+Date: Tue, 8 Nov 2022 20:20:40 +0800
 Subject: Perftest: Fix verification of max_inline_data for *_create_qp_ex()
 
 Currently, attr.cap.max_inline_data is used for validation in
@@ -19,10 +19,10 @@ Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
  1 file changed, 14 insertions(+), 10 deletions(-)
 
 diff --git a/src/perftest_resources.c b/src/perftest_resources.c
-index b6f1cb8..5065181 100755
+index 23c31d1..751ea96 100755
 --- a/src/perftest_resources.c
 +++ b/src/perftest_resources.c
-@@ -2364,22 +2364,21 @@ struct ibv_qp* ctx_qp_create(struct pingpong_context *ctx,
+@@ -2138,22 +2138,21 @@ struct ibv_qp* ctx_qp_create(struct pingpong_context *ctx,
  	int dc_num_of_qps = user_param->num_of_qps / 2;
  
  	int is_dc_server_side = 0;
@@ -50,7 +50,7 @@ index b6f1cb8..5065181 100755
  	#endif
  
  	attr.send_cq = ctx->send_cq;
-@@ -2554,10 +2553,15 @@ struct ibv_qp* ctx_qp_create(struct pingpong_context *ctx,
+@@ -2328,10 +2327,15 @@ struct ibv_qp* ctx_qp_create(struct pingpong_context *ctx,
  		fprintf(stderr, "Current TX depth is %d and inline size is %d .\n", user_param->tx_depth, user_param->inline_size);
  	}
  
@@ -71,5 +71,5 @@ index b6f1cb8..5065181 100755
  
  	return qp;
 -- 
-2.30.0
+2.34.1
 

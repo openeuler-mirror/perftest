@@ -1,16 +1,17 @@
 Name:           perftest
 Version:        4.5
-Release:        2
+Release:        3
 License:        GPLv2 or BSD
 Summary:        RDMA Performance Testing Tools
 Url:            https://github.com/linux-rdma/perftest
 Source:         https://github.com/linux-rdma/perftest/releases/download/v4.5-0.12/perftest-4.5-0.12.ge93c538.tar.gz
 
-Patch1: 0001-Perftest-Fix-verification-of-max_inline_data-for-_cr.patch
-Patch2: 0002-Perftest-Add-support-for-HNS.patch
-Patch3: 0003-Perftest-Add-new-HNS-roce-device-ROH-to-support-new_.patch
+Patch1: 0001-perftest_parameters-Add-inline-feature-support-of-ER.patch
+Patch2: 0002-Perftest-replace-rand-with-getrandom-during-MR-buffe.patch
+Patch3: 0003-Perftest-Fix-verification-of-max_inline_data-for-_cr.patch
 Patch4: 0004-Perftest-Increase-max-inline-size-to-support-larger-.patch
-Patch5: 0005-Perftest-replace-rand-with-getrandom-during-MR-buffe.patch
+Patch5: 0005-Perftest-Add-support-for-HNS.patch
+Patch6: 0006-Perftest-Add-new-HNS-roce-device-ROH-to-support-new_.patch
 
 BuildRequires:  automake gcc libibverbs-devel >= 1.2.0 librdmacm-devel >= 1.0.21 libibumad-devel >= 1.3.10.2
 BuildRequires:  pciutils-devel
@@ -36,6 +37,12 @@ done
 %_bindir/*
 
 %changelog
+* Tue Nov 22 2022 tangchengchang <tangchengchang@huawei.com> - 4.5-3
+- Type: bugfix
+- ID: NA
+- SUG: NA
+- DESC: Replace patches with the perftest community version.
+
 * Mon Nov 07 2022 tangchengchang <tangchengchang@huawei.com> - 4.5-2
 - Type: requirement
 - ID: NA

@@ -1,6 +1,6 @@
-From cfe0f71c2382f95e809f7edefa052e7ac9a41f8e Mon Sep 17 00:00:00 2001
+From 6d8f1feed063e04d0419c0d895e919a24c7c24d4 Mon Sep 17 00:00:00 2001
 From: Chengchang Tang <tangchengchang@huawei.com>
-Date: Thu, 28 Apr 2022 15:59:42 +0800
+Date: Tue, 8 Nov 2022 20:20:44 +0800
 Subject: Perftest: replace rand() with getrandom() during MR buffer
  initialization
 
@@ -11,6 +11,7 @@ testing large packects in above scenario.
 
 test has been done:
 """
+\#define HUGE_MR_SIZE 2147483647
 int main(int argc, char *argv[])
 {
         char *a = malloc(HUGE_MR_SIZE * sizeof(char));
@@ -64,19 +65,19 @@ Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
  2 files changed, 27 insertions(+), 5 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 0c310f9..007957b 100755
+index 21a17bc..2bbc7fc 100755
 --- a/configure.ac
 +++ b/configure.ac
 @@ -60,6 +60,7 @@ AC_PROG_LIBTOOL
  AC_PROG_RANLIB
  AC_HEADER_STDC
  AC_CHECK_HEADERS([infiniband/verbs.h],,[AC_MSG_ERROR([ibverbs header files not found])])
-+AC_CHECK_HEADERS([sys/random.h],,[AC_MSG_ERROR([getrandom available])])
++AC_CHECK_HEADERS([sys/random.h],,)
  AC_CHECK_LIB([ibverbs], [ibv_get_device_list], [], [AC_MSG_ERROR([libibverbs not found])])
  AC_CHECK_LIB([rdmacm], [rdma_create_event_channel], [], AC_MSG_ERROR([librdmacm-devel not found]))
  AC_CHECK_LIB([ibumad], [umad_init], [LIBUMAD=-libumad], AC_MSG_ERROR([libibumad not found]))
 diff --git a/src/perftest_resources.c b/src/perftest_resources.c
-index dc19cc3..334bede 100755
+index 33db58e..23c31d1 100755
 --- a/src/perftest_resources.c
 +++ b/src/perftest_resources.c
 @@ -22,6 +22,9 @@
@@ -89,7 +90,7 @@ index dc19cc3..334bede 100755
  #ifdef HAVE_SRD
  #include <infiniband/efadv.h>
  #endif
-@@ -1716,12 +1719,33 @@ int create_cqs(struct pingpong_context *ctx, struct perftest_parameters *user_pa
+@@ -1542,12 +1545,33 @@ int create_cqs(struct pingpong_context *ctx, struct perftest_parameters *user_pa
  	return ret;
  }
  
@@ -124,7 +125,7 @@ index dc19cc3..334bede 100755
  	int flags = IBV_ACCESS_LOCAL_WRITE;
  
  
-@@ -1860,13 +1884,10 @@ int create_single_mr(struct pingpong_context *ctx, struct perftest_parameters *u
+@@ -1686,13 +1710,10 @@ int create_single_mr(struct pingpong_context *ctx, struct perftest_parameters *u
  #ifdef HAVE_CUDA
  	if (!user_param->use_cuda) {
  #endif
@@ -140,5 +141,5 @@ index dc19cc3..334bede 100755
  #ifdef HAVE_CUDA
  	}
 -- 
-2.30.0
+2.34.1
 

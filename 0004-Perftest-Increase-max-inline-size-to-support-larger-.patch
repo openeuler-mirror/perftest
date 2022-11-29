@@ -1,6 +1,6 @@
-From 18152fd789f6be3eaf82684206a3ce86149180fe Mon Sep 17 00:00:00 2001
+From f1d3612de51294cf1d9eab3487fc11c37ffe1386 Mon Sep 17 00:00:00 2001
 From: Chengchang Tang <tangchengchang@huawei.com>
-Date: Tue, 8 Nov 2022 11:48:35 +0800
+Date: Tue, 8 Nov 2022 20:20:43 +0800
 Subject: Perftest: Increase max inline size to support larger inline tests
 
 For some hns roce devices, a maximum of 1024 bytes of inline is
@@ -14,10 +14,10 @@ Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/perftest_parameters.h b/src/perftest_parameters.h
-index 717a154..25be929 100755
+index bfd42f0..9a4d2bb 100755
 --- a/src/perftest_parameters.h
 +++ b/src/perftest_parameters.h
-@@ -178,8 +178,8 @@
+@@ -177,8 +177,8 @@
  #define UC_MAX_RX     (16000)
  #define MIN_CQ_MOD    (1)
  #define MAX_CQ_MOD    (1024)
@@ -29,5 +29,5 @@ index 717a154..25be929 100755
  #define MAX_EQ_NUM    (2048)
  
 -- 
-2.30.0
+2.34.1
 

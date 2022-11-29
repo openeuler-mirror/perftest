@@ -1,0 +1,49 @@
+From 7389878920aba23a6b86a376a601bacd03ca9f41 Mon Sep 17 00:00:00 2001
+From: Cheng Xu <chengyou@linux.alibaba.com>
+Date: Wed, 26 Oct 2022 10:39:10 +0800
+Subject: perftest_parameters: Add inline feature support of ERDMA device
+
+Let perftest recognize ERDMA device and set the correct max inline size.
+
+Signed-off-by: Cheng Xu <chengyou@linux.alibaba.com>
+---
+ src/perftest_parameters.c | 3 +++
+ src/perftest_parameters.h | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/perftest_parameters.c b/src/perftest_parameters.c
+index 448592a..1d26e4f 100755
+--- a/src/perftest_parameters.c
++++ b/src/perftest_parameters.c
+@@ -1865,6 +1865,7 @@ enum ctx_device ib_dev_name(struct ibv_context *context)
+ 			case 55300 : dev_fname = NETXTREME; break;
+ 			case 61344 : dev_fname = EFA; break;
+ 			case 61345 : dev_fname = EFA; break;
++			case 4223  : dev_fname = ERDMA; break;
+ 			default	   : dev_fname = UNKNOWN;
+ 		}
+ 	}
+@@ -2036,6 +2037,8 @@ static void ctx_set_max_inline(struct ibv_context *context,struct perftest_param
+ 				user_param->inline_size = 32;
+ 			else if (current_dev == QLOGIC_E4)
+ 				user_param->inline_size = 128;
++			else if (current_dev == ERDMA)
++				user_param->inline_size = 96;
+ 
+ 		} else {
+ 			user_param->inline_size = 0;
+diff --git a/src/perftest_parameters.h b/src/perftest_parameters.h
+index dcf6214..bfd42f0 100755
+--- a/src/perftest_parameters.h
++++ b/src/perftest_parameters.h
+@@ -333,6 +333,7 @@ enum ctx_device {
+ 	CONNECTX7		= 26,
+ 	QLOGIC_AHP		= 27,
+ 	BLUEFIELD3		= 28,
++	ERDMA			= 29,
+ };
+ 
+ /* Units for rate limiter */
+-- 
+2.34.1
+

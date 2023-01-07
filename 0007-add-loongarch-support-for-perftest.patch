@@ -1,0 +1,35 @@
+From 9600d3bae7e8f116aff303df7e13f23e67274096 Mon Sep 17 00:00:00 2001
+From: Wenlong Zhang <zhangwenlong@loongson.cn>
+Date: Sat, 7 Jan 2023 03:23:20 +0000
+Subject: [PATCH] add loongarch support for perftest
+
+add function get_cycles for loongarch64
+
+Signed-off-by: Wenlong Zhang <zhangwenlong@loongson.cn>
+---
+ src/get_clock.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/src/get_clock.h b/src/get_clock.h
+index dacbcd0..5b7b48b 100755
+--- a/src/get_clock.h
++++ b/src/get_clock.h
+@@ -105,6 +105,15 @@ static inline cycles_t get_cycles()
+ 	return cval;
+ }
+ 
++#elif defined(__loongarch64)
++typedef unsigned long cycles_t;
++static inline cycles_t get_cycles()
++{
++       cycles_t count;
++       asm volatile("rdtime.d %0, $zero" : "=r" (count));
++       return count;
++}
++
+ #else
+ #warning get_cycles not implemented for this architecture: attempt asm/timex.h
+ #include <asm/timex.h>
+-- 
+2.33.0
+

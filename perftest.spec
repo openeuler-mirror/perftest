@@ -1,6 +1,6 @@
 Name:           perftest
 Version:        4.5
-Release:        3
+Release:        4
 License:        GPLv2 or BSD
 Summary:        RDMA Performance Testing Tools
 Url:            https://github.com/linux-rdma/perftest
@@ -12,9 +12,11 @@ Patch3: 0003-Perftest-Fix-verification-of-max_inline_data-for-_cr.patch
 Patch4: 0004-Perftest-Increase-max-inline-size-to-support-larger-.patch
 Patch5: 0005-Perftest-Add-support-for-HNS.patch
 Patch6: 0006-Perftest-Add-new-HNS-roce-device-ROH-to-support-new_.patch
+Patch7: 0007-add-loongarch-support-for-perftest.patch
 
 BuildRequires:  automake gcc libibverbs-devel >= 1.2.0 librdmacm-devel >= 1.0.21 libibumad-devel >= 1.3.10.2
 BuildRequires:  pciutils-devel
+BuildRequires:  guile
 Obsoletes:      openib-perftest < 1.3
 
 %description
@@ -37,6 +39,12 @@ done
 %_bindir/*
 
 %changelog
+* Fri Jan 6 2023 Wenlong Zhang<zhangwenlong@loongson.cn> - 4.5-4
+- Type: bugfix
+- ID: NA
+- SUG: NA
+- DESC: fix build error for loongarch64
+
 * Tue Nov 22 2022 tangchengchang <tangchengchang@huawei.com> - 4.5-3
 - Type: bugfix
 - ID: NA

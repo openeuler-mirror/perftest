@@ -1,10 +1,12 @@
 Name:           perftest
 Version:        4.5
-Release:        1
+Release:        2
 License:        GPLv2 or BSD
 Summary:        RDMA Performance Testing Tools
 Url:            https://github.com/linux-rdma/perftest
 Source:         https://github.com/linux-rdma/perftest/releases/download/v4.5-0.12/perftest-4.5-0.12.ge93c538.tar.gz
+
+Patch001:	0001-add-loongarch-support-for-perftest.patch
 
 BuildRequires:  gcc libibverbs-devel >= 1.2.0 librdmacm-devel >= 1.0.21 libibumad-devel >= 1.3.10.2
 BuildRequires:  pciutils-devel
@@ -30,6 +32,9 @@ done
 %_bindir/*
 
 %changelog
+* Fri Jan 6 2023 Wenlong Zhang<zhangwenlong@loongson.cn> - 4.5-2
+- add loong64 support for perftest
+
 * Tue Jan 18 2022 SimpleUpdate Robot <tc@openeuler.org> - 4.5-1
 - Upgrade to version 4.5
 

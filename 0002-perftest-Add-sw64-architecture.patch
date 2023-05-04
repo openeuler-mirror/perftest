@@ -1,0 +1,36 @@
+From 7c50b1caada38f5269a519bbf3f18a884c2d4bb0 Mon Sep 17 00:00:00 2001
+From: Wu Zixuan <wuzx1226@qq.com>
+Date: Tue, 28 Feb 2023 22:02:35 +0800
+Subject: [PATCH] Add sw64 architecture
+
+Signed-off-by: Wu Zixuan <wuzx1226@qq.com>
+---
+ src/get_clock.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/get_clock.h b/src/get_clock.h
+index 2d8d0bf..2095685 100755
+--- a/src/get_clock.h
++++ b/src/get_clock.h
+@@ -113,6 +113,18 @@ static inline cycles_t get_cycles()
+ 	asm volatile("rdtime.d %0, $zero" : "=r" (count));
+        return count;
+ }
++
++#elif defined(__sw_64__)
++
++typedef unsigned long cycles_t;
++static inline cycles_t get_cycles()
++{
++       cycles_t cval;
++       asm volatile("memb" : : : "memory");
++       asm volatile("rtc %0" : "=r" (cval));
++       return cval;
++}
++
+ #else
+ #warning get_cycles not implemented for this architecture: attempt asm/timex.h
+ #include <asm/timex.h>
+-- 
+2.33.0
+

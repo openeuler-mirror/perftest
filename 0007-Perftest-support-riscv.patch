@@ -1,0 +1,19 @@
+diff -u -r perftest-4.5/src/get_clock.h perftest-4.5/src/get_clock.h
+--- perftest-4.5/src/get_clock.h	2021-10-13 18:12:28.000000000 +0800
++++ perftest-4.5/src/get_clock.h	2023-05-13 00:08:56.000000000 +0800
+@@ -105,6 +105,15 @@
+ 	return cval;
+ }
+ 
++#elif defined(__riscv)
++typedef unsigned long long cycles_t;
++static inline cycles_t get_cycles(void)
++{
++    cycles_t ret;
++    asm volatile ("rdtime %0" : "=r" (ret));
++    return ret;
++}
++
+ #else
+ #warning get_cycles not implemented for this architecture: attempt asm/timex.h
+ #include <asm/timex.h>
